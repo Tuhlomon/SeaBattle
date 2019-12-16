@@ -21,7 +21,7 @@ public class Game extends JPanel implements ActionListener {
     private Field myField = new Field();
     private Field enemyField = new Field();
     private Master bot;
-    private String path = "C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\";
+    private String path = "C:\\Users\\ponit\\IdeaProjects\\SeaBattle\\spaceship battle\\";
 
     private Timer timer = new Timer(50, this);
     private BufferedImage[] bg = new BufferedImage[4];

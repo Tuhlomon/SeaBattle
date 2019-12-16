@@ -21,6 +21,7 @@ public class Game extends JPanel implements ActionListener {
     private Field myField = new Field();
     private Field enemyField = new Field();
     private Master bot;
+    private String path = "C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\";
 
     private Timer timer = new Timer(50, this);
     private BufferedImage[] bg = new BufferedImage[4];
@@ -41,24 +42,26 @@ public class Game extends JPanel implements ActionListener {
     private int unlockFire = 0; //0 - кнопка заблокирована; 1 - можно жмякать
     private int sign = 0;
 
+
+
     public Game(){
         try {
-            signed[0] = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\notsigned2.png"));
-            signed[1] = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\signed.png"));
-            bg[0] = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\bg_main.png"));
-            bg[2] = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\bg_planning.png"));
-            bg[3] = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\bg_battlearea.png"));
-            cursor = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\cursor.png"));
-            buttonrun = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\RUN.png"));
-            buttonfire = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\FIRE.png"));
-            fire30 = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\blockfire_30.png"));
-            fire60 = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\blockfire_60.png"));
-            ship = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\ship2.png"));
-            marker = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\marker2.png"));
-            destroyedShip = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\error2.png")); //CHANGE IT!
-            buttonReady = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\iamready.png"));
-            turn[0] = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\turntohor.png"));
-            turn[1] = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\turntover.png"));
+            signed[0] = ImageIO.read(new File(path + "notsigned2.png"));
+            signed[1] = ImageIO.read(new File(path + "signed.png"));
+            bg[0] = ImageIO.read(new File(path + "bg_main.png"));
+            bg[2] = ImageIO.read(new File(path + "bg_planning.png"));
+            bg[3] = ImageIO.read(new File(path + "bg_battlearea.png"));
+            cursor = ImageIO.read(new File(path + "cursor.png"));
+            buttonrun = ImageIO.read(new File(path + "RUN.png"));
+            buttonfire = ImageIO.read(new File(path + "FIRE.png"));
+            fire30 = ImageIO.read(new File(path + "blockfire_30.png"));
+            fire60 = ImageIO.read(new File(path + "blockfire_60.png"));
+            ship = ImageIO.read(new File(path + "ship2.png"));
+            marker = ImageIO.read(new File(path + "marker2.png"));
+            destroyedShip = ImageIO.read(new File(path + "error2.png")); //CHANGE IT!
+            buttonReady = ImageIO.read(new File(path + "iamready.png"));
+            turn[0] = ImageIO.read(new File(path + "turntohor.png"));
+            turn[1] = ImageIO.read(new File(path + "turntover.png"));
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(this, e.getMessage());

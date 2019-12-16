@@ -1,6 +1,7 @@
 package org.suai.view;
 
 import org.suai.model.Field;
+import org.suai.model.Master;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -16,8 +17,10 @@ public class Game extends JPanel implements ActionListener {
     private int cursorY = 0;
     private int type = 1;
     private int hor = 0;
+    private boolean online = false;
     private Field myField = new Field();
     private Field enemyField = new Field();
+    private Master bot;
 
     private Timer timer = new Timer(50, this);
     private BufferedImage[] bg = new BufferedImage[4];
@@ -32,7 +35,6 @@ public class Game extends JPanel implements ActionListener {
     private BufferedImage fire60;
     private BufferedImage buttonReady;
     private BufferedImage[] turn = new BufferedImage[2];
-
 
     private int screen = 0; //0 - главный; 1 - комнаты; 2 - расстановка сил; 3 - поле боя
     private int condition = 0; //0 - ход игрока; 1 - ход соперника
@@ -77,6 +79,7 @@ public class Game extends JPanel implements ActionListener {
                                 System.out.println("play offline");
                                 myField = new Field();
                                 screen = 2;
+                                online = false;
                             }
                             else if (mouseY > 360 && mouseY < 390){ //play online
                                 System.out.println("play online");
@@ -131,6 +134,7 @@ public class Game extends JPanel implements ActionListener {
                             unlockFire = 0;
                             enemyField = new Field();
                             screen = 3;
+                            if (!online) bot = new Master();
                         }
                         if (mouseX > 450 && mouseX < 720 && mouseY > 390 && mouseY < 450)
                             screen = 0;
@@ -145,6 +149,14 @@ public class Game extends JPanel implements ActionListener {
                         }
                         else if (mouseX > 60 && mouseX < 330 && mouseY > 390 && mouseY < 450 && unlockFire == 1) { //клик по кнопке огонь
                             System.out.println("BOOOOM! C:");
+                            if (online){
+
+                            }
+                            else{
+                                int x = bot.getShot(cursorX*10+cursorY);
+                                if (x == 4) enemyField.setMarkers(cursorX, cursorY);
+                                else enemyField.setMarker(cursorX, cursorY, x);
+                            }
                             unlockFire = 0;
                         }
                         break;
@@ -211,15 +223,7 @@ public class Game extends JPanel implements ActionListener {
 //            JOptionPane.showMessageDialog(this, "Game over!!", "Hahaha", JOptionPane.PLAIN_MESSAGE);
 //            System.exit(0);
 //        }
-//        if (dir != 4) {
-//            player.move(dir, mass);
-//            dir = 4;
-//        }
-//        if (enemy != null) for (int i = 0; i < enemy.size(); i++){
-//            if (enemy.get(i) != null) {
-//                enemy.get(i).calculate(player, mass);
-//            }
-//        }
+
         repaint();
     }
 }

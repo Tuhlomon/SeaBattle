@@ -49,18 +49,102 @@ public class Field {
         return true;
     }
 
-    public int getShot(int x){ //3 - попал, 5 - выиграл, 2 - промах
-        if (mtx[x/10][x%10] == 0) {
-            mtx[x/10][x%10] = 2;
+    public int getShot(int x){ //3 - попал, 5 - выиграл, 2 - промах, 4 - убил
+        int y = x%10;
+        x = x/10;
+        int i = 1;
+        if (mtx[x][y] == 0) {
+            mtx[x][y] = 2;
             return 2;
         }
-        mtx[x/10][x%10] = 3;
+        mtx[x][y] = 3;
         if (--totalships <= 0) return 5;
-        return 3;
+        while (x+i < 10){
+            if (mtx[x+i][y] == 1) return 3;
+            if (mtx[x+i][y] != 3) break;
+            i++;
+        }
+        i = 1;
+        while (x-i >= 0){
+            if (mtx[x-i][y] == 1) return 3;
+            if (mtx[x-i][y] != 3) break;
+            i++;
+        }
+        i = 1;
+        while (y+i < 10){
+            if (mtx[x][y+i] == 1) return 3;
+            if (mtx[x][y+i] != 3) break;
+            i++;
+        }
+        i = 1;
+        while (y-i >= 0){
+            if (mtx[x][y-i] == 1) return 3;
+            if (mtx[x][y-i] != 3) break;
+            i++;
+        }
+        setMarkers(x, y);
+        return 4;
     }
 
     public void setMarker(int x, int y, int marker){
         mtx[x][y] = marker;
+    }
+
+    public void setMarkers(int x, int y){
+        mtx[x][y] = 3;
+        int i = 0;
+        if ((x+1 < 10 && mtx[x+1][y] == 3) || (x-1 >= 0 && mtx[x-1][y] == 3)){
+            while (x+i < 10 && mtx[x+i][y] == 3){
+                if (y+1 < 10) mtx[x+i][y+1] = 2;
+                if (y-1 >= 0) mtx[x+i][y-1] = 2;
+                i++;
+            }
+            if (x+i < 10){
+                mtx[x+i][y] = 2;
+                if (y+1 < 10) mtx[x+i][y+1] = 2;
+                if (y-1 >= 0) mtx[x+i][y-1] = 2;
+            }
+            i = 0;
+            while (x-i >= 0 && mtx[x-i][y] == 3){
+                if (y+1 < 10) mtx[x-i][y+1] = 2;
+                if (y-1 >= 0) mtx[x-i][y-1] = 2;
+                i++;
+            }
+            if (x-i >= 0){
+                mtx[x-i][y] = 2;
+                if (y+1 < 10) mtx[x-i][y+1] = 2;
+                if (y-1 >= 0) mtx[x-i][y-1] = 2;
+            }
+            i = 0;
+        }
+        else if ((y+1 < 10 && mtx[x][y+1] == 3) || (y-1 >= 0 && mtx[x][y-1] == 3)){
+            while (y+i < 10 && mtx[x][y+i] == 3){
+                if (x+1 < 10) mtx[x+1][y+i] = 2;
+                if (x-1 >= 0) mtx[x-1][y+i] = 2;
+                i++;
+            }
+            if (y+i < 10){
+                mtx[x][y+i] = 2;
+                if (x+1 < 10) mtx[x+1][y+i] = 2;
+                if (x-1 >= 0) mtx[x-1][y+i] = 2;
+            }
+            i = 0;
+            while (y-i >= 0 && mtx[x][y-i] == 3){
+                if (x+1 < 10) mtx[x+1][y-i] = 2;
+                if (x-1 >= 0) mtx[x-1][y-i] = 2;
+                i++;
+            }
+            if (y-i >= 0){
+                mtx[x][y-i] = 2;
+                if (x+1 < 10) mtx[x+1][y-i] = 2;
+                if (x-1 >= 0) mtx[x-1][y-i] = 2;
+            }
+        }
+        else for (int q = -1; q < 2; q++)
+            for (int p = -1; p < 2; p++){
+                if (q == 0 && p ==0) continue;
+                if (x+p >= 0 && x+p < 10 && y+q >=0 && y+q < 10) mtx[x+p][y+q] = 2;
+            }
     }
 
     public int getCell(int x, int y){

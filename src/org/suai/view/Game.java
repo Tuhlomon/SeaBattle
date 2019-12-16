@@ -14,16 +14,25 @@ public class Game extends JPanel implements ActionListener {
     private int mouseY = 0;
     private int cursorX = 0;
     private int cursorY = 0;
+    private int type = 1;
+    private int hor = 0;
+    private Field myField = new Field();
+    private Field enemyField = new Field();
 
     private Timer timer = new Timer(50, this);
     private BufferedImage[] bg = new BufferedImage[4];
     private BufferedImage[] signed = new BufferedImage[2];
     private BufferedImage cursor;
     private BufferedImage ship;
+    private BufferedImage marker;
+    private BufferedImage destroyedShip;
     private BufferedImage buttonrun;
     private BufferedImage buttonfire;
     private BufferedImage fire30;
     private BufferedImage fire60;
+    private BufferedImage buttonReady;
+    private BufferedImage[] turn = new BufferedImage[2];
+
 
     private int screen = 0; //0 - главный; 1 - комнаты; 2 - расстановка сил; 3 - поле боя
     private int condition = 0; //0 - ход игрока; 1 - ход соперника
@@ -43,6 +52,11 @@ public class Game extends JPanel implements ActionListener {
             fire30 = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\blockfire_30.png"));
             fire60 = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\blockfire_60.png"));
             ship = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\ship2.png"));
+            marker = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\marker2.png"));
+            destroyedShip = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\error2.png")); //CHANGE IT!
+            buttonReady = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\iamready.png"));
+            turn[0] = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\turntohor.png"));
+            turn[1] = ImageIO.read(new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\turntover.png"));
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -61,6 +75,7 @@ public class Game extends JPanel implements ActionListener {
                         if (mouseX > 510 && mouseX < 690){
                             if (mouseY > 300 && mouseY < 330){ //play offline
                                 System.out.println("play offline");
+                                myField = new Field();
                                 screen = 2;
                             }
                             else if (mouseY > 360 && mouseY < 390){ //play online
@@ -97,11 +112,32 @@ public class Game extends JPanel implements ActionListener {
 
                         break;
                     case 2:
-
+                        if (mouseX > 60 && mouseX < 360 && mouseY > 60 && mouseY < 360) { //клик по полю
+                            cursorX = (mouseX - 60) / 30;
+                            cursorY = (mouseY - 60) / 30;
+                            if (myField.isFreeCell(cursorX, cursorY)) myField.setShip(cursorX, cursorY, type, hor);
+                            else myField.resetShip(cursorX, cursorY, 1);
+                            if (myField.isReady()){
+                                unlockFire = 1;
+                            }
+                            else unlockFire = 0;
+                        }
+                        if (mouseY > 60 && mouseY < 90 && mouseX > 510 && mouseX < 540) type = 1;
+                        if (mouseY > 120 && mouseY < 150 && mouseX > 510 && mouseX < 570) type = 2;
+                        if (mouseY > 180 && mouseY < 210 && mouseX > 510 && mouseX < 600) type = 3;
+                        if (mouseY > 240 && mouseY < 270 && mouseX > 510 && mouseX < 630) type = 4;
+                        if (mouseY > 300 && mouseY < 360 && mouseX > 510 && mouseX < 570) hor = ++hor%2;
+                        if (mouseX > 60 && mouseX < 330 && mouseY > 390 && mouseY < 450 && unlockFire == 1){
+                            unlockFire = 0;
+                            enemyField = new Field();
+                            screen = 3;
+                        }
+                        if (mouseX > 450 && mouseX < 720 && mouseY > 390 && mouseY < 450)
+                            screen = 0;
                         break;
                     case 3:
                         if (mouseX > 60 && mouseX < 360 && mouseY > 60 && mouseY < 360) { //клик по полю врага
-                            if (true) { //добавить проверку на свобдную клетку
+                            if (enemyField.isFreeCell((mouseX - 60) / 30, (mouseY - 60) / 30)) { //добавить проверку на свобдную клетку
                                 cursorX = (mouseX - 60) / 30;
                                 cursorY = (mouseY - 60) / 30;
                                 unlockFire = 1;
@@ -123,7 +159,9 @@ public class Game extends JPanel implements ActionListener {
                 switch (f.getCell(i, j)){
                     case 0: continue;
                     case 1: g.drawImage(ship, offsetX + i*30, offsetY + j*30, null);
+                    break;
                     case 2: g.drawImage(marker, offsetX + i*30, offsetY + j*30, null);
+                    break;
                     case 3: g.drawImage(destroyedShip, offsetX + i*30, offsetY + j*30, null);
                 }
             }
@@ -132,7 +170,7 @@ public class Game extends JPanel implements ActionListener {
 
     public void paint(Graphics g){
         g.drawImage(bg[screen], 0, 0, null);
-        switch (screen){
+        switch (screen) {
             case 0: //Главный экран
                 g.drawImage(signed[sign], 480, 30, null);
                 break;
@@ -140,7 +178,13 @@ public class Game extends JPanel implements ActionListener {
 
                 break;
             case 2: //Расстановка сил
-
+                drawField(g, myField, 60, 60);
+                if (unlockFire == 1){
+                    g.drawImage(fire60, 60, 390, null);
+                }
+                else g.drawImage(fire30, 60, 390, null);
+                g.drawImage(buttonReady, 60, 390, null);
+                g.drawImage(turn[hor], 510, 300, null);
                 break;
             case 3: //Поле боя
                 if (condition == 0){
@@ -155,7 +199,7 @@ public class Game extends JPanel implements ActionListener {
                 else { //наши орудия перезаряжаются
 
                 }
-                drawField(g, userField, 60, 60);
+                drawField(g, myField, 450, 60);
                 drawField(g, enemyField, 60, 60);
                 break;
         }
@@ -163,19 +207,19 @@ public class Game extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-       /* if (player.getHealth() <= 0){
-            JOptionPane.showMessageDialog(this, "Game over!!", "Hahaha", JOptionPane.PLAIN_MESSAGE);
-            System.exit(0);
-        }
-        if (dir != 4) {
-            player.move(dir, mass);
-            dir = 4;
-        }
-        if (enemy != null) for (int i = 0; i < enemy.size(); i++){
-            if (enemy.get(i) != null) {
-                enemy.get(i).calculate(player, mass);
-            }
-        }*/
+//        if (player.getHealth() <= 0){
+//            JOptionPane.showMessageDialog(this, "Game over!!", "Hahaha", JOptionPane.PLAIN_MESSAGE);
+//            System.exit(0);
+//        }
+//        if (dir != 4) {
+//            player.move(dir, mass);
+//            dir = 4;
+//        }
+//        if (enemy != null) for (int i = 0; i < enemy.size(); i++){
+//            if (enemy.get(i) != null) {
+//                enemy.get(i).calculate(player, mass);
+//            }
+//        }
         repaint();
     }
 }

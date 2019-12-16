@@ -1,5 +1,6 @@
 package org.suai.model;
 
+
 public class Field {
     private int[][] mtx = new int [10][10];
     private int[] maxships = {4, 3, 2, 1};

@@ -41,7 +41,7 @@ public class Game extends JPanel implements ActionListener {
     private int condition = 0; //0 - ход игрока; 1 - ход соперника
     private int unlockFire = 0; //0 - кнопка заблокирована; 1 - можно жмякать
     private int sign = 0;
-
+    private int x = 0;
 
 
     public Game(){
@@ -156,9 +156,14 @@ public class Game extends JPanel implements ActionListener {
 
                             }
                             else{
-                                int x = bot.getShot(cursorX*10+cursorY);
-                                if (x == 4) enemyField.setMarkers(cursorX, cursorY);
+                                x = bot.getShot(cursorX*10+cursorY);
+                                if (x == 5) {
+                                    JOptionPane.showMessageDialog(null, "YOU WIN!");
+                                    screen = 0;
+                                }
+                                else if (x == 4) enemyField.setMarkers(cursorX, cursorY);
                                 else enemyField.setMarker(cursorX, cursorY, x);
+                                if (x == 2) condition = 1;
                             }
                             unlockFire = 0;
                         }
@@ -222,11 +227,10 @@ public class Game extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        if (player.getHealth() <= 0){
-//            JOptionPane.showMessageDialog(this, "Game over!!", "Hahaha", JOptionPane.PLAIN_MESSAGE);
-//            System.exit(0);
-//        }
-
+        if (screen == 3 && !online && condition == 1){
+            x = bot.doShot();
+            if (myField.getShot(x) == 2) condition = 0;
+        }
         repaint();
     }
 }

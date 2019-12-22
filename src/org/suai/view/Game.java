@@ -21,7 +21,7 @@ public class Game extends JPanel implements ActionListener {
     private Field myField = new Field();
     private Field enemyField = new Field();
     private Master bot;
-    private String path = "C:\\Users\\ponit\\IdeaProjects\\SeaBattle\\spaceship battle\\";
+    private String path = "C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\";
 
     private Timer timer = new Timer(50, this);
     private BufferedImage[] bg = new BufferedImage[4];
@@ -158,6 +158,7 @@ public class Game extends JPanel implements ActionListener {
                             else{
                                 x = bot.getShot(cursorX*10+cursorY);
                                 if (x == 5) {
+                                    enemyField.setMarkers(cursorX, cursorY);
                                     JOptionPane.showMessageDialog(null, "YOU WIN!");
                                     screen = 0;
                                 }
@@ -229,7 +230,15 @@ public class Game extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (screen == 3 && !online && condition == 1){
             x = bot.doShot();
-            if (myField.getShot(x) == 2) condition = 0;
+            x = myField.getShot(x);
+            if (x == 5) {
+                JOptionPane.showMessageDialog(null, "YOU LOSE!");
+                screen = 0;
+            }
+            else {
+                bot.getRecoil(x);
+                if (x == 2) condition = 0;
+            }
         }
         repaint();
     }

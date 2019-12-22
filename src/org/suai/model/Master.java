@@ -20,9 +20,18 @@ public class Master {
         }
     }
 
+    public void getRecoil(int r){
+        if (r == 4) enemyField.setMarkers(prevX, prevY);
+        else enemyField.setMarker(prevX, prevY, r);
+    }
+
     public int doShot(){
         prevX = rand.nextInt(10);
         prevY = rand.nextInt(10);
+        while (!enemyField.isFreeCell(prevX, prevY)){
+            prevX = rand.nextInt(10);
+            prevY = rand.nextInt(10);
+        }
         return prevX*10+prevY;
     }
 

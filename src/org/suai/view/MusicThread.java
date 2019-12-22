@@ -8,7 +8,7 @@ import java.io.File;
 public class MusicThread extends Thread{
     public void run(){
         try{
-            File file = new File("C:\\Users\\ponit\\IdeaProjects\\SeaBattle\\spaceship battle\\bg.wav");
+            File file = new File("C:\\Users\\Tuhlomon\\Desktop\\spaceship battle\\bg.wav");
             AudioInputStream ais =  AudioSystem.getAudioInputStream(file);
             Clip audio = AudioSystem.getClip();
             audio.open(ais);

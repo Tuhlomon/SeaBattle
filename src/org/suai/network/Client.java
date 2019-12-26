@@ -47,13 +47,14 @@ public class Client {
         out.println((char)253);
         out.println(lognpas);
         myID = give();
-        giveString();
         return myID;
     }
 
     public int give(){
         try {
-            return in.read();
+            int x = in.read();
+            in.readLine();
+            return x;
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

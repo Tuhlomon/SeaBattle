@@ -46,6 +46,7 @@ public class ClientThread extends Thread {
                             Room room = new Room(socket);
                             rooms.push(room);
                             System.out.println("Somebody in queue");
+                            room.exitGame();
                         }
                         else{
                             Room room = rooms.pop();
@@ -58,6 +59,8 @@ public class ClientThread extends Thread {
                 }
             }
         }
-        catch(Exception e) {}
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

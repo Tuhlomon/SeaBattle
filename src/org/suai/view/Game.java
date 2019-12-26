@@ -152,11 +152,12 @@ public class Game extends JPanel implements ActionListener {
                         if (mouseX > 60 && mouseX < 330 && mouseY > 390 && mouseY < 450 && unlockFire == 1){
                             unlockFire = 0;
                             enemyField = new Field();
-                            screen = 3;
                             if (!online) bot = new Master();
                             else{
-                                client.sent(180);//i am ready;
+                                client.sent(108);//i am ready;
+                                condition = client.give();
                             }
+                            screen = 3;
                         }
                         if (mouseX > 450 && mouseX < 720 && mouseY > 390 && mouseY < 450)
                             screen = 0;
@@ -172,7 +173,18 @@ public class Game extends JPanel implements ActionListener {
                         else if (mouseX > 60 && mouseX < 330 && mouseY > 390 && mouseY < 450 && unlockFire == 1) { //клик по кнопке огонь
                             System.out.println("BOOOOM! C:");
                             if (online){
-
+                                if (condition == 0){
+                                    client.sent(cursorX*10+cursorY);
+                                    x = client.give();
+                                    if (x == 5) {
+                                        enemyField.setMarkers(cursorX, cursorY);
+                                        JOptionPane.showMessageDialog(null, "YOU WIN!");
+                                        screen = 0;
+                                    }
+                                    else if (x == 4) enemyField.setMarkers(cursorX, cursorY);
+                                    else enemyField.setMarker(cursorX, cursorY, x);
+                                    if (x == 2) condition = 1;
+                                }
                             }
                             else{
                                 x = bot.getShot(cursorX*10+cursorY);
@@ -247,6 +259,7 @@ public class Game extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        repaint();
         if (screen == 3 && !online && condition == 1){
             x = bot.doShot();
             x = myField.getShot(x);
@@ -259,9 +272,20 @@ public class Game extends JPanel implements ActionListener {
                 if (x == 2) condition = 0;
             }
         }
-        else if (screen == 1){
-
+        else if (screen == 3 && online && condition == 1){
+            x = client.give(); //принимаем выстрел
+            x = myField.getShot(x);
+            client.sent(x); //отправляем ответ
+            if (x == 5) {
+                JOptionPane.showMessageDialog(null, "YOU LOSE!");
+                screen = 0;
+            }
+            else {
+                if (x == 2) condition = 0;
+            }
         }
-        repaint();
+        else if (screen == 1){
+            if (client.give() == 107) screen = 2;
+        }
     }
 }

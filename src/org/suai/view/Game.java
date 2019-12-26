@@ -2,15 +2,18 @@ package org.suai.view;
 
 import org.suai.model.Field;
 import org.suai.model.Master;
+import org.suai.network.Client;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.*;
 
 public class Game extends JPanel implements ActionListener {
+    private Client client = new Client();
+
     private int mouseX = 0;
     private int mouseY = 0;
     private int cursorX = 0;
@@ -49,6 +52,7 @@ public class Game extends JPanel implements ActionListener {
             signed[0] = ImageIO.read(new File(path + "notsigned2.png"));
             signed[1] = ImageIO.read(new File(path + "signed.png"));
             bg[0] = ImageIO.read(new File(path + "bg_main.png"));
+            bg[1] = ImageIO.read(new File(path + "queue.png"));
             bg[2] = ImageIO.read(new File(path + "bg_planning.png"));
             bg[3] = ImageIO.read(new File(path + "bg_battlearea.png"));
             cursor = ImageIO.read(new File(path + "cursor.png"));
@@ -85,8 +89,15 @@ public class Game extends JPanel implements ActionListener {
                                 online = false;
                             }
                             else if (mouseY > 360 && mouseY < 390){ //play online
-                                System.out.println("play online");
-                                screen = 1;
+                                if (sign == 1) {
+                                    System.out.println("play online");
+                                    client.sent(106);
+                                    online = true;
+                                    screen = 1;
+                                }
+                                else{
+                                    JOptionPane.showMessageDialog(null, "You must be authorized");
+                                }
                             }
                             else if (mouseY > 420 && mouseY < 450){ //exit
                                 System.out.println("exit");
@@ -96,10 +107,15 @@ public class Game extends JPanel implements ActionListener {
                         if (sign == 0){
                             if (mouseX > 540 && mouseY > 30 && mouseX < 660 && mouseY < 60){ //sign in
                                 System.out.println("sign in");
-                                sign = 1;
+                                if (client.authorization("login & password") != -1){
+                                    System.out.println(client.getID());
+                                    sign = 1;
+                                }
                             }
                             else if (mouseX > 510 && mouseY > 90 && mouseX < 690 && mouseY < 120){ //registration
                                 System.out.println("registration");
+                                client.sent(254);
+                                client.sentString("Login & password");
                             }
                         }
                         else{
@@ -138,6 +154,9 @@ public class Game extends JPanel implements ActionListener {
                             enemyField = new Field();
                             screen = 3;
                             if (!online) bot = new Master();
+                            else{
+                                client.sent(180);//i am ready;
+                            }
                         }
                         if (mouseX > 450 && mouseX < 720 && mouseY > 390 && mouseY < 450)
                             screen = 0;
@@ -239,6 +258,9 @@ public class Game extends JPanel implements ActionListener {
                 bot.getRecoil(x);
                 if (x == 2) condition = 0;
             }
+        }
+        else if (screen == 1){
+
         }
         repaint();
     }

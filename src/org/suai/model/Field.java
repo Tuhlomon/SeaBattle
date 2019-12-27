@@ -50,6 +50,10 @@ public class Field {
         return true;
     }
 
+    public int getAvailable(int type){
+        return maxships[type] - ships[type];
+    }
+
     public int getShot(int x){ //3 - попал, 5 - выиграл, 2 - промах, 4 - убил
         int y = x%10;
         x = x/10;

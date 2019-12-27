@@ -20,6 +20,7 @@ public class Game extends JPanel implements ActionListener {
     private int cursorY = 0;
     private int type = 1;
     private int hor = 0;
+    private int animation = 0;
     private boolean online = false;
     private Field myField = new Field();
     private Field enemyField = new Field();
@@ -30,9 +31,11 @@ public class Game extends JPanel implements ActionListener {
     private BufferedImage[] bg = new BufferedImage[4];
     private BufferedImage[] signed = new BufferedImage[2];
     private BufferedImage cursor;
-    private BufferedImage ship;
+    private BufferedImage web;
+    private BufferedImage[] ship = new BufferedImage[5];
+    private BufferedImage[] numeral = new BufferedImage[5];
     private BufferedImage marker;
-    private BufferedImage destroyedShip;
+    private BufferedImage[] destroyedShip = new BufferedImage[5];
     private BufferedImage buttonrun;
     private BufferedImage buttonfire;
     private BufferedImage fire30;
@@ -49,6 +52,7 @@ public class Game extends JPanel implements ActionListener {
 
     public Game(){
         try {
+            web = ImageIO.read(new File(path + "web.png"));
             signed[0] = ImageIO.read(new File(path + "notsigned2.png"));
             signed[1] = ImageIO.read(new File(path + "signed.png"));
             bg[0] = ImageIO.read(new File(path + "bg_main.png"));
@@ -60,12 +64,15 @@ public class Game extends JPanel implements ActionListener {
             buttonfire = ImageIO.read(new File(path + "FIRE.png"));
             fire30 = ImageIO.read(new File(path + "blockfire_30.png"));
             fire60 = ImageIO.read(new File(path + "blockfire_60.png"));
-            ship = ImageIO.read(new File(path + "ship2.png"));
+            for (int i = 0; i < 5; i++) {
+                ship[i] = ImageIO.read(new File(path + "newship" + i + ".png"));
+                numeral[i] = ImageIO.read(new File(path + "numeral" + i + ".png"));
+                destroyedShip[i] = ImageIO.read(new File(path + "destroyedship" + i + "1.png"));
+            }
             marker = ImageIO.read(new File(path + "marker2.png"));
-            destroyedShip = ImageIO.read(new File(path + "error2.png")); //CHANGE IT!
             buttonReady = ImageIO.read(new File(path + "iamready.png"));
-            turn[0] = ImageIO.read(new File(path + "turntohor.png"));
-            turn[1] = ImageIO.read(new File(path + "turntover.png"));
+            turn[0] = ImageIO.read(new File(path + "turntover.png"));
+            turn[1] = ImageIO.read(new File(path + "turntohor.png"));
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -210,21 +217,22 @@ public class Game extends JPanel implements ActionListener {
             for (int j = 0; j < 10; j++){
                 switch (f.getCell(i, j)){
                     case 0: continue;
-                    case 1: g.drawImage(ship, offsetX + i*30, offsetY + j*30, null);
+                    case 1: g.drawImage(ship[animation/3], offsetX + i*30, offsetY + j*30, null);
                     break;
                     case 2: g.drawImage(marker, offsetX + i*30, offsetY + j*30, null);
                     break;
-                    case 3: g.drawImage(destroyedShip, offsetX + i*30, offsetY + j*30, null);
+                    case 3: g.drawImage(destroyedShip[animation/3], offsetX + i*30, offsetY + j*30, null);
                 }
             }
         }
+        g.drawImage(web, offsetX, offsetY, null);
     }
 
     public void paint(Graphics g){
         g.drawImage(bg[screen], 0, 0, null);
         switch (screen) {
             case 0: //Главный экран
-                g.drawImage(signed[sign], 480, 30, null);
+                g.drawImage(signed[sign], 480, 60, null);
                 break;
             case 1: //Комнаты
 
@@ -237,6 +245,9 @@ public class Game extends JPanel implements ActionListener {
                 else g.drawImage(fire30, 60, 390, null);
                 g.drawImage(buttonReady, 60, 390, null);
                 g.drawImage(turn[hor], 510, 300, null);
+                for (int i = 0; i < 4; i++){
+                    g.drawImage(numeral[myField.getAvailable(i)], 480, 60 + 60*i, null);
+                }
                 break;
             case 3: //Поле боя
                 if (condition == 0){
@@ -259,6 +270,7 @@ public class Game extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (!online) animation = (animation+1) % 15;
         repaint();
         if (screen == 3 && !online && condition == 1){
             x = bot.doShot();
